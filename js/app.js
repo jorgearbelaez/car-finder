@@ -56,12 +56,15 @@ precioMaximo.addEventListener("change", (e) => {
 });
 puertas.addEventListener("change", (e) => {
   datosBusqueda.puertas = e.target.value;
+  filtrarAuto();
 });
 transmision.addEventListener("change", (e) => {
   datosBusqueda.transmision = e.target.value;
+  filtrarAuto();
 });
 color.addEventListener("change", (e) => {
   datosBusqueda.color = e.target.value;
+  filtrarAuto();
 });
 
 //funciones
@@ -116,10 +119,17 @@ function filtrarAuto() {
     .filter(filtrarMarca)
     .filter(filtrarYear)
     .filter(filtrarMinimo)
-    .filter(filtrarMaximo);
+    .filter(filtrarMaximo)
+    .filter(filtrarPuertas)
+    .filter(filtrarTransmision)
+    .filter(filtrarColor);
   console.log(resultado);
 
-  mostrarAutos(resultado);
+  if (resultado.length) {
+    mostrarAutos(resultado);
+  } else {
+    noHayResultado();
+  }
 }
 
 function filtrarMarca(auto) {
@@ -136,13 +146,38 @@ function filtrarYear(auto) {
 }
 function filtrarMinimo(auto) {
   if (datosBusqueda.minimo) {
-    return auto.precio >= parseInt(datosBusqueda.minimo); // me transforma a numero para la comparacion
+    return auto.precio >= datosBusqueda.minimo; // no hace falta transformar el string porque no hay un operador estricto(===)
   }
   return auto;
 }
 function filtrarMaximo(auto) {
   if (datosBusqueda.maximo) {
-    return auto.precio <= parseInt(datosBusqueda.maximo); // me transforma a numero para la comparacion
+    return auto.precio <= datosBusqueda.maximo; // no hace falta transformar el string porque no hay un operador estricto(===)
   }
   return auto;
+}
+function filtrarPuertas(auto) {
+  if (datosBusqueda.puertas) {
+    return auto.puertas === parseInt(datosBusqueda.puertas); // me transforma a numero para la comparacion
+  }
+  return auto;
+}
+function filtrarTransmision(auto) {
+  if (datosBusqueda.transmision) {
+    return auto.transmision === datosBusqueda.transmision; //
+  }
+  return auto;
+}
+function filtrarColor(auto) {
+  if (datosBusqueda.color) {
+    return auto.color === datosBusqueda.color; //
+  }
+  return auto;
+}
+function noHayResultado() {
+  limpiarHTML();
+  const sinResultado = document.createElement("div");
+  sinResultado.textContent = "Tu busqueda no arrojó resultados";
+  sinResultado.classList.add("alerta", "error");
+  resultado.appendChild(sinResultado);
 }
